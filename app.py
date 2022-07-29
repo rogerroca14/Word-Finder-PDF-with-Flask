@@ -15,20 +15,21 @@ def normalize(s):
         ("í", "i"),
         ("ó", "o"),
         ("ú", "u"),
-        ("\n", " ")
+        ("\n", " "),
+        ("  ", " ")
     )
     for a, b in replacements:
         s = s.replace(a, b).replace(a.upper(), b.upper())
     return s
 
-# Funcion para convertir pdf a txt
 def convert_pdf_to_text(doc_pdf,id):
     from tika import parser
     file = doc_pdf
     file_data = parser.from_file(file)
-    text = file_data['content']
-    with open(("archivos_txt/file-text-" + str(id) + ".txt"), "w") as txtfile:
-        print("String Variable: {}".format(normalize(text)), file=txtfile)
+    text = normalize(file_data['content'])
+    text_file = open('archivos_txt/' + "file-txt-" + str(id) + ".txt", "w")
+    text_file.write("Purchase Amount: %s" % text.encode('utf-8'))
+    text_file.close()
 
 # Conección con MYSQL
 app.config['MYSQL_HOST'] = 'localhost'
