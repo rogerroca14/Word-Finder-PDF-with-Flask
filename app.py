@@ -23,25 +23,12 @@ def normalize(s):
 
 # Funcion para convertir pdf a txt
 def convert_pdf_to_text(doc_pdf,id):
-    from io import StringIO
-    from pdfminer.converter import TextConverter
-    from pdfminer.layout import LAParams
-    from pdfminer.pdfdocument import PDFDocument
-    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-    from pdfminer.pdfpage import PDFPage
-    from pdfminer.pdfparser import PDFParser
-
-    output_string = StringIO()
-    with open(doc_pdf, 'rb') as in_file:
-        parser = PDFParser(in_file)
-        doc = PDFDocument(parser)
-        rsrcmgr = PDFResourceManager()
-        device = TextConverter(rsrcmgr, output_string, laparams=LAParams())
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
-        for page in PDFPage.create_pages(doc):
-            interpreter.process_page(page)
+    from tika import parser
+    file = doc_pdf
+    file_data = parser.from_file(file)
+    text = file_data['content']
     with open(("archivos_txt/file-text-" + str(id) + ".txt"), "w") as txtfile:
-        print("String Variable: {}".format(normalize(output_string.getvalue().lower())), file=txtfile)
+        print("String Variable: {}".format(normalize(text)), file=txtfile)
 
 # Conección con MYSQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -72,7 +59,7 @@ def upload_file():
 @app.route("/upload", methods=['POST'])
 def uploader():
     if request.method == 'POST':
-        # obtenemos el archivo del input "archivo"
+        # Obtenemos el archivo del input "archivo"
         f = request.files['archivo']
         filename = secure_filename(f.filename)
         print(filename)
@@ -92,7 +79,7 @@ def uploader():
 
         # Guardar en base de datos
         nombre_archivo = filename
-        ruta_pdf = 'archivos_pdf/' + filename
+        ruta_pdf = "archivos_pdf/file-pdf-" + str(id_archiv) + ".pdf"
         ruta_text = "archivos_txt/file-text-" + str(id_archiv) + ".txt"
 
         # Conectando a una base de datos
@@ -104,7 +91,6 @@ def uploader():
         # Retornamos una respuesta satisfactoria
         flash('Archivo ' + filename +' subido exitosamente')
         return redirect(url_for('Index'))
-
 ###
 
 @app.route('/add_contact', methods=['POST'])
