@@ -27,7 +27,7 @@ def convert_pdf_to_text(doc_pdf,id):
     file = doc_pdf
     file_data = parser.from_file(file)
     text = normalize(file_data['content'])
-    text_file = open('archivos_txt/' + "file-txt-" + str(id) + ".txt", "w")
+    text_file = open('archivos_txt/' + "file-text-" + str(id) + ".txt", "w")
     text_file.write("Purchase Amount: %s" % text.encode('utf-8'))
     text_file.close()
 
