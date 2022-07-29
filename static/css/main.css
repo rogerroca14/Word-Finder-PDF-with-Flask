@@ -1,0 +1,27 @@
+/* Separadores para inputs */
+.form-control {
+    margin-bottom: 0.5em;
+}
+
+/* Separadores para las tarjetas, margen inferior */
+.card-body {
+    margin-bottom: 10px;
+}
+
+/* Estilo de separador de linea */
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid #ffffff;
+  }
+
+/* Estilo del boton submit */
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+    margin-top: 10px;
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+}
