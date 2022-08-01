@@ -120,6 +120,10 @@ def delete_contact(id):
     flash('Archivo Removido Satisfactoriamente de la carpeta contenedora')
     return redirect(url_for('Index'))
 
+@app.route('/search/')
+def about():
+    return render_template('search.html')
+
 # Definiendo sesion y puerto de sv
 if __name__ == '__main__':
     app.run(port=3000, debug=True)

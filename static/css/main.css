@@ -11,7 +11,7 @@
 
 /* Estilo del boton submit */
 [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
-    margin-top: 10px;
+    margin-top: 0px;
 }
 
 .footer{
