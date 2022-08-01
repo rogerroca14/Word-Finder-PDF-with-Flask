@@ -1,13 +1,15 @@
+# Librerias
 import os
+import datetime
+import pandas as pd
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import  FileStorage
-import pandas as pd
 
 app = Flask(__name__)
 
-# Funcion para normalizar
+# Funcion para normalizar (tildes y espacios dobles)
 def normalize(s):
     replacements = (
         ("á", "a"),
@@ -22,14 +24,13 @@ def normalize(s):
         s = s.replace(a, b).replace(a.upper(), b.upper())
     return s
 
+# Función para convertir pdf a txt
 def convert_pdf_to_text(doc_pdf,id):
     from tika import parser
     file = doc_pdf
     file_data = parser.from_file(file)
     text = normalize(file_data['content'])
-    text_file = open('archivos_txt/' + "file-text-" + str(id) + ".txt", "w")
-    text_file.write("Purchase Amount: %s" % text.encode('utf-8'))
-    text_file.close()
+    return text.encode('utf-8') # Convirtiendo a UTF-8
 
 # Conección con MYSQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -41,6 +42,7 @@ mysql = MySQL(app)
 # Configuraciones para session
 app.secret_key = 'mysecretkey'
 
+# Imprimir tabla con los valores de la base de datos
 @app.route('/')
 def Index():
     cur = mysql.connection.cursor()
@@ -48,8 +50,7 @@ def Index():
     data = cur.fetchall()
     return render_template('index.html', archivos_pdf = data)
 
-### Funciones de importar
-# Carpeta de subida
+# Definiendo la Carpeta de subida para los archivos PDF
 app.config['UPLOAD_FOLDER'] = './archivos_pdf'
 
 @app.route("/")
@@ -57,6 +58,7 @@ def upload_file():
     # renderiamos la plantilla "formulario.html"
     return render_template('formulario.html')
 
+# Ruta para subir los documentos PDF
 @app.route("/upload", methods=['POST'])
 def uploader():
     if request.method == 'POST':
@@ -70,13 +72,12 @@ def uploader():
         cur.execute('SELECT MAX(id_archivo) FROM archivos_pdf;')
         id_archiv = cur.fetchall()[0][0] + 1
         print(id_archiv)
-        print('owo')
 
         # Guardamos el archivo en el directorio "archivos_pdf"
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], "file-pdf-" + str(id_archiv) + ".pdf"))
-        print('Empezamos rey uwu')
-        convert_pdf_to_text('archivos_pdf/' + "file-pdf-" + str(id_archiv) + ".pdf", id_archiv)
-        print("lo logramos nya nya")
+
+        txt_temp = convert_pdf_to_text('archivos_pdf/' + "file-pdf-" + str(id_archiv) + ".pdf", id_archiv).lower()
+        fecha_temp = datetime.datetime.now()
 
         # Guardar en base de datos
         nombre_archivo = filename
@@ -85,15 +86,17 @@ def uploader():
 
         # Conectando a una base de datos
         cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO archivos_pdf (nombre_archivo, ruta_pdf	, ruta_text) VALUES (%s, %s, %s)',
-        (nombre_archivo, ruta_pdf, ruta_text))
+        cur.execute('INSERT INTO archivos_pdf (nombre_archivo, fecha_hora_subida, ruta_pdf , ruta_text, contenido) VALUES (%s, %s, %s, %s, %s)',
+        (nombre_archivo, fecha_temp, ruta_pdf, ruta_text, txt_temp))
         mysql.connection.commit()
+        txt_temp=''
+        fecha_temp=''
 
         # Retornamos una respuesta satisfactoria
         flash('Archivo ' + filename +' subido exitosamente')
         return redirect(url_for('Index'))
-###
 
+# Función para añadir contactos a la pagina (TEST)
 @app.route('/add_contact', methods=['POST'])
 def add_contact():
     if request.method == 'POST':
@@ -108,33 +111,15 @@ def add_contact():
         flash('Contacto agregado satisfactoriamente')
         return redirect(url_for('Index'))
 
-
-@app.route('/update/<id>', methods = ['POST'])
-def update_contact(id):
-    if request.method == 'POST':
-        fullname = request.form['fullname']
-        phone = request.form['phone']
-        email = request.form['email']
-        cur = mysql.connection.cursor()
-        cur.execute("""
-            UPDATE contacts
-            SET fullname = %s,
-                email = %s,
-                phone = %s
-            WHERE id = %s
-        """, (fullname, email,phone, id))
-        mysql.connection.commit()
-        flash('Contacto actualizado satisfactoriamente')
-        return redirect(url_for('Index'))
-
-
+# Ruta para eliminar un archivo
 @app.route('/delete/<string:id>')
 def delete_contact(id):
     cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM archivos_pdf WHERE id={0}'.format(id))
+    cur.execute('DELETE FROM archivos_pdf WHERE id_archivo={0}'.format(id))
     mysql.connection.commit()
-    flash('Contacto Removido Satisfactoriamente')
+    flash('Archivo Removido Satisfactoriamente de la carpeta contenedora')
     return redirect(url_for('Index'))
 
+# Definiendo sesion y puerto de sv
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
