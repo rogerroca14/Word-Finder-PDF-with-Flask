@@ -111,18 +111,17 @@ def add_contact():
         flash('Contacto agregado satisfactoriamente')
         return redirect(url_for('Index'))
 
-# Ruta para eliminar un archivo
-@app.route('/delete/<string:id>')
-def delete_contact(id):
-    cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM archivos_pdf WHERE id_archivo={0}'.format(id))
-    mysql.connection.commit()
-    flash('Archivo Removido Satisfactoriamente de la carpeta contenedora')
-    return redirect(url_for('Index'))
+@app.route('/search-results')
+def my_form():
+    return render_template('search-results.html')
 
-@app.route('/search/')
-def about():
-    return render_template('search.html')
+@app.route('/', methods=['POST'])
+def my_form_post_search():
+    text = request.form['text_search_web']
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * from archivos_pdf WHERE contenido LIKE '%" + str(normalize(text)) +"%'")
+    data_search = cur.fetchall()
+    return render_template('search-results.html', data2=data_search, textsearch="Palabra buscada: '" + normalize(text) + "'")
 
 # Definiendo sesion y puerto de sv
 if __name__ == '__main__':

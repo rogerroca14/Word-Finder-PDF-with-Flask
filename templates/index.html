@@ -1,11 +1,23 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-<!-- Sección de Subir Archivo -->
+<!-- Animación 3D icon -->
 
 <div class="row" id="img-3d">
 <iframe src='https://my.spline.design/chromecopy-384ed9ef4dc07e4ef64c8e3cc51a8c70/' frameborder='0' width='100%' height='100%'></iframe>
 </div>
+
+<!--Buscador de Palabras-->
+<form method="POST">
+    <div class="container pt-4">
+        <div class="input-group mb-3">
+          <input name="text_search_web" type="text" class="form-control" placeholder="Escribe la palabra..." aria-label="Recipient's username" aria-describedby="button-addon2">
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-success"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+        </div>
+      </div>
+</form>
 
 <!-- Mensaje de subido o eliminado -->
 {% with messages = get_flashed_messages() %}
@@ -59,7 +71,9 @@
                     <tr>
                         <td>{{ archivo.1 }}</td>
                         <td>
+                            <!--scripts
                             <a href="/archivos_pdf/{{archivo.1}}" class="btn btn-success">Descargar</a>
+                            -->
                             <a href="/delete/{{archivo.0}}" class="btn btn-danger">Eliminar</a>
                         </td>
                     </tr>

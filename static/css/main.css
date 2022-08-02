@@ -39,3 +39,20 @@ hr {
     padding-left: 2em;
     padding-right: 2em;
 }
+
+.form-control {
+    margin-top: 2em;
+}
+
+.alert {
+    color: #fff;
+    border: none;
+    margin-top: 2em;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    margin-top: 20px;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
