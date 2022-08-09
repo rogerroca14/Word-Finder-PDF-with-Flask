@@ -2,7 +2,6 @@
 {% block body %}
 
 <!-- Animación 3D icon -->
-
 <div class="row" id="img-3d">
 <iframe src='https://my.spline.design/chromecopy-384ed9ef4dc07e4ef64c8e3cc51a8c70/' frameborder='0' width='100%' height='100%'></iframe>
 </div>
@@ -71,9 +70,7 @@
                     <tr>
                         <td>{{ archivo.1 }}</td>
                         <td>
-                            <!--scripts
-                            <a href="/archivos_pdf/{{archivo.1}}" class="btn btn-success">Descargar</a>
-                            -->
+                            <a href="/{{archivo.3}}" class="btn btn-success" target="_blank">Ver/Descargar PDF</a>
                             <a href="/delete/{{archivo.0}}" class="btn btn-danger">Eliminar</a>
                         </td>
                     </tr>

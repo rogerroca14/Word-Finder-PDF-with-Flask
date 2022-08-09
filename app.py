@@ -1,5 +1,6 @@
 # Librerias
 import os
+from os import remove
 import datetime
 import pandas as pd
 from flask import Flask, flash, render_template, request, redirect, url_for
@@ -51,7 +52,7 @@ def Index():
     return render_template('index.html', archivos_pdf = data)
 
 # Definiendo la Carpeta de subida para los archivos PDF
-app.config['UPLOAD_FOLDER'] = './archivos_pdf'
+app.config['UPLOAD_FOLDER'] = './static/pdf'
 
 @app.route("/")
 def upload_file():
@@ -73,16 +74,16 @@ def uploader():
         id_archiv = cur.fetchall()[0][0] + 1
         print(id_archiv)
 
-        # Guardamos el archivo en el directorio "archivos_pdf"
+        # Guardamos el archivo en el directorio "static/pdf/"
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], "file-pdf-" + str(id_archiv) + ".pdf"))
 
-        txt_temp = convert_pdf_to_text('archivos_pdf/' + "file-pdf-" + str(id_archiv) + ".pdf", id_archiv).lower()
+        txt_temp = convert_pdf_to_text('static/pdf/' + "file-pdf-" + str(id_archiv) + ".pdf", id_archiv).lower()
         fecha_temp = datetime.datetime.now()
 
         # Guardar en base de datos
         nombre_archivo = filename
-        ruta_pdf = "archivos_pdf/file-pdf-" + str(id_archiv) + ".pdf"
-        ruta_text = "archivos_txt/file-text-" + str(id_archiv) + ".txt"
+        ruta_pdf = "static/pdf/file-pdf-" + str(id_archiv) + ".pdf"
+        ruta_text = "static/txt/file-text-" + str(id_archiv) + ".txt"
 
         # Conectando a una base de datos
         cur = mysql.connection.cursor()
@@ -97,11 +98,11 @@ def uploader():
         return redirect(url_for('Index'))
 
 @app.route('/search-results')
-def my_form():
+def searchresults():
     return render_template('search-results.html')
 
 @app.route('/integrantes')
-def my_form3():
+def integrantes():
     return render_template('integrantes.html')
 
 @app.route('/', methods=['POST'])
@@ -111,6 +112,17 @@ def my_form_post_search():
     cur.execute("SELECT * from archivos_pdf WHERE contenido LIKE '%" + str(normalize(text)) +"%'")
     data_search = cur.fetchall()
     return render_template('search-results.html', data2=data_search, textsearch="Palabra buscada: '" + normalize(text) + "'")
+
+# Ruta para eliminar un pdf de la base de datos
+@app.route('/delete/<string:id>')
+def delete_contact(id):
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM archivos_pdf WHERE id_archivo={0}'.format(id))
+    print(id)
+    mysql.connection.commit()
+    remove("static/pdf/file-pdf-{0}.pdf".format(id))
+    flash('Archivo Removido Satisfactoriamente')
+    return redirect(url_for('Index'))
 
 # Definiendo sesion y puerto de sv
 if __name__ == '__main__':

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de PDF - SGBD1</title>
-    <link rel="icon" href="static/icon.png">
+    <title>Contact Flask App</title>
     <link rel="stylesheet" href="https://bootswatch.com/5/slate/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -23,9 +22,15 @@
 
     <div class="container pt-4">
 
-      <!-- Contenido de 'index.html'-->
-        {% block body %}
-        {% endblock %}
+      <div class="list-group">
+        <a href="/" class="list-group-item list-group-item-action active" aria-current="true">
+          <i class="fa-solid fa-arrow-left"></i>
+          &nbsp Regresar al inicio</a>
+        </div>
+
+        <div id="pdfwindow"></div>
+        <div id="contents" class="hide">{{contents}}</div>
+
     </div>
 
     <!--scripts-->
@@ -39,34 +44,13 @@
         <script src="{{url_for('static', filename='js/main.js')}}"></script>
 
 <footer>
-
   <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0);">
       Proyecto de fin de curso 
       <br/>
       Sistemas de Gestion de Base de Datos 1 - UNALM 2022
       <br/>
-
-      <div class="modal fade" id="integrantestoggle" aria-hidden="true" aria-labelledby="integrantestoggleLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="integrantestoggleLabel">Integrantes</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="integrantes">
-              <i class="fa-solid fa-user"></i>&nbsp&nbsp GOMEZ MENDEZ YAN FRANCO (20151235) </br>
-              <i class="fa-solid fa-user"></i>&nbsp&nbsp GUTARRA SEGUIL GABRIELA GAHIA (20180261) </br>
-              <i class="fa-solid fa-user"></i>&nbsp&nbsp LOPEZ ORE, JIMMY ARTHUR (20161243) </br>
-              <i class="fa-solid fa-user"></i>&nbsp&nbsp MORALES MORALES FLAVIO OSCAR (20170202) </br>
-              <i class="fa-solid fa-user"></i>&nbsp&nbsp ROCA LLAMOCCA, ROGER RICARDO (20170188) </br>
-            </div>
-          </div>
-        </div>
-      </div>
-    </br>
-      <a class="btn" data-bs-toggle="modal" href="#integrantestoggle" role="button">Ver integrantes</a>
+      <a class="text-white" href="/integrantes">Ver integrantes del proyecto</a>
     </div>
-
 </footer>
 </body>
 </html>
