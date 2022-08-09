@@ -56,3 +56,11 @@ hr {
     font-weight: 500;
     line-height: 1.2;
 }
+
+h5 {
+    text-align: center;
+}
+
+.card-body {
+    flex: 0 0;
+}

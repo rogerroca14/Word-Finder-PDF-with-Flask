@@ -96,24 +96,13 @@ def uploader():
         flash('Archivo ' + filename +' subido exitosamente')
         return redirect(url_for('Index'))
 
-# Función para añadir contactos a la pagina (TEST)
-@app.route('/add_contact', methods=['POST'])
-def add_contact():
-    if request.method == 'POST':
-        fullname = request.form['fullname']
-        phone = request.form['phone']
-        email = request.form['email']
-        # Conectando a una base de datos
-        cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO contacts (fullname, phone, email) VALUES (%s, %s, %s)',
-        (fullname,phone,email))
-        mysql.connection.commit()
-        flash('Contacto agregado satisfactoriamente')
-        return redirect(url_for('Index'))
-
 @app.route('/search-results')
 def my_form():
     return render_template('search-results.html')
+
+@app.route('/integrantes')
+def my_form3():
+    return render_template('integrantes.html')
 
 @app.route('/', methods=['POST'])
 def my_form_post_search():
