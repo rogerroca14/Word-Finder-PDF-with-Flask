@@ -2,7 +2,7 @@
 import os
 from os import remove
 import datetime
-import pandas as pd
+from tika import parser
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
@@ -26,8 +26,7 @@ def normalize(s):
     return s
 
 # Función para convertir pdf a texto
-def convert_pdf_to_text(doc_pdf,id):
-    from tika import parser
+def convert_pdf_to_text(doc_pdf):
     file = doc_pdf
     file_data = parser.from_file(file)
     text = normalize(file_data['content'])
@@ -54,10 +53,10 @@ def Index():
 # Definiendo la Carpeta de subida para los archivos PDF
 app.config['UPLOAD_FOLDER'] = './static/pdf'
 
-@app.route("/")
-def upload_file():
-    # renderiamos la plantilla "formulario.html"
-    return render_template('formulario.html')
+# Definiendo rutas
+@app.route('/search-results')
+def searchresults():
+    return render_template('search-results.html')
 
 # Ruta para subir los documentos PDF
 @app.route("/upload", methods=['POST'])
@@ -68,7 +67,7 @@ def uploader():
         filename = secure_filename(f.filename)
         print(filename)
 
-        # Convirtiendo el PDF a txt
+        # Definir el id para el nuevo archivo subido
         cur = mysql.connection.cursor()
         cur.execute('SELECT MAX(id_archivo) FROM archivos_pdf;')
         id_archiv = cur.fetchall()[0][0] + 1
@@ -77,18 +76,20 @@ def uploader():
         # Guardamos el archivo en el directorio "static/pdf/"
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], "file-pdf-" + str(id_archiv) + ".pdf"))
 
-        txt_temp = convert_pdf_to_text('static/pdf/' + "file-pdf-" + str(id_archiv) + ".pdf", id_archiv).lower()
-        fecha_temp = datetime.datetime.now()
+        txt_temp = convert_pdf_to_text('static/pdf/' + "file-pdf-" + str(id_archiv) + ".pdf").lower()
 
-        # Guardar en base de datos
+        # Definir la fecha y hora de subida
+        fecha_temp = datetime.datetime.now()
+        print(fecha_temp)
+
+        # Preparando variables a almacenar en base de datos
         nombre_archivo = filename
         ruta_pdf = "static/pdf/file-pdf-" + str(id_archiv) + ".pdf"
-        ruta_text = "static/txt/file-text-" + str(id_archiv) + ".txt"
 
-        # Conectando a una base de datos
+        # Conectando a una base de datos y insertando los valores nuevos
         cur = mysql.connection.cursor()
         cur.execute('INSERT INTO archivos_pdf (nombre_archivo, fecha_hora_subida, ruta_pdf , ruta_text, contenido) VALUES (%s, %s, %s, %s, %s)',
-        (nombre_archivo, fecha_temp, ruta_pdf, ruta_text, txt_temp))
+        (nombre_archivo, fecha_temp, ruta_pdf, '', txt_temp))
         mysql.connection.commit()
         txt_temp=''
         fecha_temp=''
@@ -96,14 +97,6 @@ def uploader():
         # Retornamos una respuesta satisfactoria
         flash('Archivo ' + filename +' subido exitosamente')
         return redirect(url_for('Index'))
-
-@app.route('/search-results')
-def searchresults():
-    return render_template('search-results.html')
-
-@app.route('/integrantes')
-def integrantes():
-    return render_template('integrantes.html')
 
 @app.route('/', methods=['POST'])
 def my_form_post_search():
