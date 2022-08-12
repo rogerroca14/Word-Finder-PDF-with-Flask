@@ -11,7 +11,7 @@
     -	ruta_pdf (varchar)
     -	ruta_txt (varchar)
     -	contenido (longtext)
-
+    
     ```sql
     CREATE TABLE `archivos_pdf` (`id_archivo`int(11) NOT NULL
     `nombre_archivo` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
@@ -23,3 +23,5 @@
     ```
 3.	Descargar contenido del repositorio:
     [Github - Word-Finder-PDF-with-Flask.](https://github.com/rogerroca14/Word-Finder-PDF-with-Flask)
+    
+    ![Aquí la descripción de la imagen por si no carga](https://raw.githubusercontent.com/rogerroca14/Word-Finder-PDF-with-Flask/img/Picture1.png)
