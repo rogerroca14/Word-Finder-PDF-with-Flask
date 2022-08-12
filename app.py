@@ -33,10 +33,10 @@ def convert_pdf_to_text(doc_pdf):
     return text.encode('utf-8') # Convirtiendo a UTF-8
 
 # Conección con MYSQL
-app.config['MYSQL_HOST'] = '50.31.188.40'
-app.config['MYSQL_USER'] = 'yvalpqfp_roger_test'
-app.config['MYSQL_PASSWORD'] = 'nju30xnv5xib'
-app.config['MYSQL_DB'] = 'yvalpqfp_sgbd1_test'
+app.config['MYSQL_HOST'] = ''
+app.config['MYSQL_USER'] = ''
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = ''
 mysql = MySQL(app)
 
 # Configuraciones para session
